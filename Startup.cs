@@ -31,9 +31,7 @@ namespace UserAuthIdentityApi
                 options.UseNpgsql(
                     Configuration.GetConnectionString("PostgresqlAuthConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
-
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddControllersWithViews().AddRazorRuntimeCompilation(); //This is added for to see cshtml changes without restarting app.
             services.AddControllersWithViews();
         }
 

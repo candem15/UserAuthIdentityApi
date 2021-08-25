@@ -4,9 +4,9 @@
 
 <div class="row">
     <div class="com-md-6 offset-md-3">
-        <div class="card login-logout-tab">
+        <div class="card login-logout-tab" style="width: 450px">
             <div class="card-header">
-                <ul class="nav nav-tabs card-header-tabs">
+                <ul class="nav nav-pills nav-fill">
                     <li class="nav-item">
                         <a class="nav-link" href='/Identity/Account/Login'>Sign In</a>
                     </li>
@@ -28,5 +28,16 @@
 
 @section Scripts
 {
-    @await RenderSectionAsync("Scripts", required: false)   
+    @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        $(function () {
+            var currentPage = location.pathname;
+            $('.nav-pills li a').each(function () {
+                var $this = $(this);
+                if(currentPage.indexOf($this.attr('href')) !== -1) {
+                    $this.addClass('active');
+                }
+            })
+        })
+    </script>
 }
