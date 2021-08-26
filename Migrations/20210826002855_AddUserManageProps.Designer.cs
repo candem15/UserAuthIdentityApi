@@ -10,15 +10,15 @@ using UserAuthIdentityApi.Data;
 namespace UserAuthIdentityApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210823005624_firstMigration")]
-    partial class firstMigration
+    [Migration("20210826002855_AddUserManageProps")]
+    partial class AddUserManageProps
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
-                .HasAnnotation("ProductVersion", "5.0.8")
+                .HasAnnotation("ProductVersion", "5.0.9")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -163,8 +163,14 @@ namespace UserAuthIdentityApi.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Age")
+                        .HasColumnType("integer");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Country")
                         .HasColumnType("text");
 
                     b.Property<string>("Email")
@@ -202,6 +208,9 @@ namespace UserAuthIdentityApi.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<byte[]>("ProfilePicture")
+                        .HasColumnType("bytea");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");

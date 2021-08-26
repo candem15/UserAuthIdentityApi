@@ -12,5 +12,16 @@ namespace UserAuthIdentityApi.Data
         [PersonalData]
         [Column(TypeName ="text")]
         public string LastName{get; set;}
+
+        [PersonalData]
+        [Column(TypeName ="text")]
+        public string Country{get; set;}
+
+        [PersonalData]
+        [Column(TypeName ="integer")]
+        public int Age{get; set;}
+
+        [PersonalData]
+        public byte[] ProfilePicture { get; set; }
     }
 }
