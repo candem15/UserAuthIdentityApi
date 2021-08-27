@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using UserAuthIdentityApi.Data;
+using System.Net.Mail;
 
 namespace UserAuthIdentityApi.Areas.Identity.Pages.Account
 {
@@ -44,7 +45,7 @@ namespace UserAuthIdentityApi.Areas.Identity.Pages.Account
         public class InputModel
         {
             [Required]
-            [EmailAddress]
+            [Display(Name = "Email / Username")] //User can login via both email and username.
             public string Email { get; set; }
 
             [Required]
@@ -76,7 +77,18 @@ namespace UserAuthIdentityApi.Areas.Identity.Pages.Account
 
             ReturnUrl = returnUrl;
         }
-
+        public bool IsValidEmail(string emailaddress) //This check
+        {
+            try
+            {
+                MailAddress m = new MailAddress(emailaddress);
+                return true;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
+        }
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
@@ -87,7 +99,16 @@ namespace UserAuthIdentityApi.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                var userName = Input.Email;
+                if (IsValidEmail(Input.Email)) //Checks if the entered data is a valid Email of Not.
+                {
+                    var user = await _userManager.FindByEmailAsync(Input.Email); //If it’s a valid email, we would want to get the username associated with the particular email id.
+                    if (user != null)
+                    {
+                        userName = user.UserName;
+                    }
+                }
+                var result = await _signInManager.PasswordSignInAsync(userName, Input.Password, Input.RememberMe, lockoutOnFailure: false); //Passes the UserName to the SigninManager.
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");

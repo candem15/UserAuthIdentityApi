@@ -35,6 +35,10 @@ namespace UserAuthIdentityApi.Areas.Identity.Pages.Account.Manage
 
         public class InputModel
         {
+            [PersonalData]
+            [Display(Name = "Username")]
+            public string UserName { get; set; }
+
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
@@ -73,6 +77,7 @@ namespace UserAuthIdentityApi.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
+                UserName = userName,
                 FirstName = firstName,
                 LastName = lastName,
                 PhoneNumber = phoneNumber,
@@ -108,11 +113,17 @@ namespace UserAuthIdentityApi.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
+            var userName = user.UserName;
             var firstName = user.FirstName;
             var lastName = user.LastName;
             var country = user.Country;
             var age = user.Age;
             var profilePicture = user.ProfilePicture;
+            if (Input.UserName != userName)
+            {
+                user.UserName = Input.UserName;
+                await _userManager.UpdateAsync(user);
+            }
             if (Input.FirstName != firstName)
             {
                 user.FirstName = Input.FirstName;
