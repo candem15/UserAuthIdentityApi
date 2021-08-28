@@ -1,0 +1,66 @@
+@model List<Microsoft.AspNetCore.Identity.IdentityRole>
+@{
+    ViewData["Title"] = "Manage Roles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h1>Manage Roles</h1>
+<form method="post" asp-action="AddRole" asp-controller="Role">
+    <div class="input-group">
+        <input name="roleName" class="form-control w-25">
+        <span class="input-group-btn">
+            <button class="btn btn-info">Add Role</button>
+        </span>
+    </div>
+</form>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Role</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var role in Model)
+        {
+            <tr>
+                <td>@role.Id</td>
+                <td>
+                    @if (@role.Name == "SuperAdmin")
+                    {
+                        @role.Name
+                    }
+                    else
+                    {
+                        <form method="post" asp-action="UpdateRole" asp-controller="Role">
+                        <div class="input-group">
+                            <input name="roleId" asp-for="@role.Id" class="form-control" hidden >
+                            <input name="roleName" asp-for="@role.Name" class="form-control" style="margin-right: 20px;">
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary">Update Role</button>
+                            </span>
+                        </div>
+                        </form>
+                    }
+
+                </td>
+                <td>
+                    @if (@role.Name == "SuperAdmin")
+                    {
+
+                    }
+                    else
+                    {
+                        <form method="post" asp-action="DeleteRole" asp-controller="Role">
+                        <div class="input-group">
+                            <input name="roleId" asp-for="@role.Id" class="form-control" hidden >
+                            <span class="input-group-btn">
+                                <button class="btn btn-danger">Delete Role</button>
+                            </span>
+                        </div>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
