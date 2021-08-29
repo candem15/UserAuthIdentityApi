@@ -5,6 +5,7 @@ namespace UserAuthIdentityApi.Enums
         SuperAdmin,
         Admin,
         Moderator,
-        Basic
+        Basic,
+        Visitor
     }
 }

@@ -14,6 +14,7 @@ namespace UserAuthIdentityApi.Data
             await roleManager.CreateAsync(new IdentityRole(Enums.Roles.Admin.ToString()));
             await roleManager.CreateAsync(new IdentityRole(Enums.Roles.Moderator.ToString()));
             await roleManager.CreateAsync(new IdentityRole(Enums.Roles.Basic.ToString()));
+            await roleManager.CreateAsync(new IdentityRole(Enums.Roles.Visitor.ToString()));
         }
         public static async Task SeedSuperAdminAsync(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
@@ -37,6 +38,7 @@ namespace UserAuthIdentityApi.Data
                     await userManager.AddToRoleAsync(defaultUser, Enums.Roles.Moderator.ToString());
                     await userManager.AddToRoleAsync(defaultUser, Enums.Roles.Admin.ToString());
                     await userManager.AddToRoleAsync(defaultUser, Enums.Roles.SuperAdmin.ToString());
+                    await userManager.AddToRoleAsync(defaultUser, Enums.Roles.Visitor.ToString());
                 }
 
             }
