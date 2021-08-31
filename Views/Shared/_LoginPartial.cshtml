@@ -2,10 +2,15 @@
 @using UserAuthIdentityApi.Data
 @inject SignInManager<ApplicationUser> SignInManager /* Here we registered our ApplicationUser which is implemented from IdentityUser */
 @inject UserManager<ApplicationUser> UserManager
+@inject RoleManager<IdentityRole> RoleManager
+
 
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
+    bool isAdmin = await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), "Admin");
+    bool isSuperAdmin = await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), "SuperAdmin");
+
     <li class="nav-item" style="align-self: center;"> <!-- If user have profile picture it will shown also in navbar-nav -->
         @if (UserManager.GetUserAsync(User).Result.ProfilePicture != null)
         {
@@ -16,9 +21,15 @@
        <a class="nav-link btn btn-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hi @User.Identity.Name!</a>
     </li>
     <li class="nav-item">
-        @if(User.Identity.Name=="SuperAdmin")
+        @if(isAdmin ||isSuperAdmin)
         {
             <a class="nav-link btn btn-link text-dark" asp-area="" asp-controller="Role" asp-action="Index">Manage Roles</a>
+        }
+    </li>
+    <li class="nav-item">
+        @if(isSuperAdmin)
+        {
+            <a class="nav-link btn btn-link text-dark" asp-area="" asp-controller="UserRoles" asp-action="Index">User's Roles</a>
         }
     </li>
     <li class="nav-item">
