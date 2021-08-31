@@ -59,7 +59,7 @@ namespace UserAuthIdentityApi.Controllers
             }
             ViewBag.UserName = user.UserName;
             var model = new List<ManageUserRolesViewModel>();
-            foreach (var role in _roleManager.Roles)
+            foreach (var role in _roleManager.Roles.ToList()) //This is an IQuerable the DataReaders connection will stay open until each role has been read. By using "ToList()" this problem solved.
             {
                 var userRolesViewModel = new ManageUserRolesViewModel
                 {

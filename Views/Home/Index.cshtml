@@ -2,7 +2,12 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- weather widget start -->
+<script type="text/javascript">
+    !function (d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (!d.getElementById(id)) { js = d.createElement(s); js.id = id; js.src = 'https://weatherwidget.io/js/widget.min.js'; fjs.parentNode.insertBefore(js, fjs); } }(document, 'script', 'weatherwidget-io-js');
+</script>
+<div class="container">
+    <a class="weatherwidget-io" href="https://forecast7.com/en/38d4227d14/izmir/" data-label_1="İZMİR"
+        data-label_2="WEATHER" data-font="Open Sans" data-icons="Climacons Animated" data-theme="pure">İZMİR WEATHER</a>
 </div>
+<!-- weather widget ends -->
