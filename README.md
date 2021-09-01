@@ -4,7 +4,7 @@
   
   1. <a href="#About Project">About Project</a>
       * <a href="#Built With">Built With</a>
-  2. <a href="Stages of Project"
+  2. <a href="Stages of Project">Stages of Project</a>
      * <a href="Create Asp.Net Core MVC Application and Scaffolding the Identity UI">Create Asp.Net Core MVC Application and Scaffolding the Identity UI</a>
      * <a href="Create ApplicationUser Inherited from IdentityUser">Create ApplicationUser inherited from IdentityUser</a>
      * <a href="Customize Register and Login Pages">Customize Register and Login Pages</a>
