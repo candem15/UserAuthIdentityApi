@@ -223,6 +223,7 @@ Go throught Views/Shared/_LoginPartial.cshtml and add new item to navbar
         }
  </li>
  ```
+<img src="https://i.imgur.com/BBUIFpU.png" width=750px alt="profile">
 
 In Progress...
 
