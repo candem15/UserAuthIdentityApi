@@ -8,14 +8,8 @@
      * <a href="Create Asp.Net Core MVC Application and Scaffolding the Identity UI">Create Asp.Net Core MVC Application and Scaffolding the Identity UI</a>
      * <a href="Create ApplicationUser Inherited from IdentityUser">Create ApplicationUser inherited from IdentityUser</a>
      * <a href="Customize Register and Login Pages">Customize Register and Login Pages</a>
-```js
-	console.log('code');
-```
-
-- code
-	```js
-		console.log('also code');
-	```
+     * <a href="Managing(Create, Read, Update, Delete) Roles">Managing(Create, Read, Update, Delete) Roles</a>
+     * <a href="Listing and Managing User's Roles">Listing and Managing User's Roles</a>
 </details>
 
 # <p id="About Project">About Project</p>
@@ -64,6 +58,7 @@ Once it is added, we can see a number of razor pages in the Areas folder.
 These are files that act as the default Identity UI. 
 Moving further we will customizing Identity to match our requirements for this project.
 After scaffolding, project folder will look like this ;
+
 <img src="https://i.imgur.com/NiSbED2.png" width=300px alt="Identity Scaffold">
 
 ## Create ApplicationUser inherited from IdentityUser
@@ -225,5 +220,44 @@ Go throught Views/Shared/_LoginPartial.cshtml and add new item to navbar
  ```
 <img src="https://i.imgur.com/BBUIFpU.png" width=750px alt="profile">
 
-In Progress...
+## Managing(Create, Read, Update, Delete) Roles
+
+Now moving to create role based authorizing for reaching web pages. 
+And theese roles will attached to users and works like military ranks. 
+Each role will have certain level of permission to make action on application. 
+First of all, we will seed default roles to database. 
+This seed will helps us to assign role auto when new account created.
+Create an Enum for the supported Roles. Add a new Enum at Enums/Roles.cs
+```
+public enum Roles
+{
+    SuperAdmin,
+    Admin,
+    Moderator,
+    Basic,
+    Visitor
+}
+```
+Then add ContextSeed.cs in Data folder and add Roles that we created at Enums/Roles.cs with RoleManager's CreateAsync method under SeedRolesAsync task method.
+Now seeded roles must be invoke at somewhere. In mine app, this place is main function at Program.cs
+```
+await ContextSeed.SeedRolesAsync(userManager, roleManager);
+```
+We can also seed user with SuperAdmin role that have every permission over application like owner of it. 
+But its optional. 
+If you want to seed that go through ContextSeed.cs => SeedSuperAdminAsync method. 
+Kinda have same procedure like seeding default roles.
+For assigning role to newly created accounts, we adding one line of code at Register.cshtml.cs
+```
+await _userManager.AddToRoleAsync(user, Enums.Roles.Basic.ToString());
+```
+After making our seeds, start building an UI with which we can View and Manage Roles. 
+It will be a simple view that Lists out all the roles available and has a feature to CRUD operations. 
+Start by adding a new Empty MVC Controller to the Controllers folder and naming it "RoleController.cs". 
+Here we generated our CRUD operations and will be shown at its view(Views/Role/Index.chtml). 
+
+<img src="https://i.imgur.com/SnsxZVx.png" alt="Manage roles">
+
+## Listing and Managing User's Roles
+
 
