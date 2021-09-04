@@ -1,15 +1,19 @@
+<h2 align="center">UserAuthIdentityApi</h2>
+<h4 align="center">User authentication and management with Asp.Net Core Identity</h2>
 
 <details>
   <summary>Table of Contents</summary>
   
   1. <a href="#About Project">About Project</a>
       * <a href="#Built With">Built With</a>
-  2. <a href="Stages of Project">Stages of Project</a>
-     * <a href="Create Asp.Net Core MVC Application and Scaffolding the Identity UI">Create Asp.Net Core MVC Application and Scaffolding the Identity UI</a>
-     * <a href="Create ApplicationUser Inherited from IdentityUser">Create ApplicationUser inherited from IdentityUser</a>
-     * <a href="Customize Register and Login Pages">Customize Register and Login Pages</a>
-     * <a href="Managing(Create, Read, Update, Delete) Roles">Managing(Create, Read, Update, Delete) Roles</a>
-     * <a href="Listing and Managing User's Roles">Listing and Managing User's Roles</a>
+      * <a href="#Live Preview">Live Preview</a>
+  2. <a href="#Stages of Project">Stages of Project</a>
+     * <a href="#Create Asp.Net Core MVC Application and Scaffolding the Identity UI">Create Asp.Net Core MVC Application and Scaffolding the Identity UI</a>
+     * <a href="#Create ApplicationUser Inherited from IdentityUser">Create ApplicationUser Inherited from IdentityUser</a>
+     * <a href="#Customize Register and Login Pages">Customize Register and Login Pages</a>
+     * <a href="#Managing(Create, Read, Update, Delete) Roles">Managing(Create, Read, Update, Delete) Roles</a>
+     * <a href="#Listing and Managing User's Roles">Listing and Managing User's Roles</a>
+  3. <a href="#Contact">Contact</a>
 </details>
 
 # <p id="About Project">About Project</p>
@@ -27,9 +31,13 @@ This project covers most of the practical use cases involved while developing Us
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-plain-wordmark.svg" width=75px>
 </div>
 
-# Stages of Project
+## <p id="Live Preview">Live Preview</p>
 
-## Create Asp.Net Core MVC Application and Scaffolding the Identity UI
+<img src="https://i.imgur.com/aDCLm3j.gif" alt="gif">
+     
+# <p id="Stages of Project">Stages of Project</p>
+
+## <p id="Create Asp.Net Core MVC Application and Scaffolding the Identity UI">Create Asp.Net Core MVC Application and Scaffolding the Identity UI</p>
 
 Start off with creating ASP.NET Core MVC project with with Authenication. I'm used VScode as IDE so i will show it via terminal commands.
 ```
@@ -61,7 +69,7 @@ After scaffolding, project folder will look like this ;
 
 <img src="https://i.imgur.com/NiSbED2.png" width=300px alt="Identity Scaffold">
 
-## Create ApplicationUser inherited from IdentityUser
+## <p id="Create ApplicationUser Inherited from IdentityUser">Create ApplicationUser Inherited from IdentityUser</p>
 
 I recommend to install this package for to see frontend changes without restarting application.
 ```
@@ -107,7 +115,7 @@ IdentityUser => ApplicationUser
 IdentityUser => ApplicationUser
 ```
 
-## Migration and Update Database
+## <p id="Migration and Update Database">Migration and Update Database</p>
 
 Before creating new migrations, we deleted existing migrations that came from creating project. 
 At ApplicationDbContext.cs we overrided existing columns to new columns names that we want. After that change table names: "AspNetUsers" => "Users", "AspNetRoles" => "Role" ...
@@ -171,7 +179,7 @@ Now our database ready to be running on PostgreSQL.
 <img src="https://i.imgur.com/pbhekeH.png" width=200px alt="postgres">
 </div>
 
-## Customize Register and Login Pages
+## <p id="Customize Register and Login Pages">Customize Register and Login Pages</p>
 
 Here i wanted to see both pages like switch buttons in same template. 
 This part is about designing pages so its completely optional.
@@ -183,7 +191,7 @@ I added first name and last name section for registering new users. Further desi
 In Register.cshtml.cs file added FirstName and LastName to InputNodel class with Required attritibute. 
 Also at Login.cshtml.cs maded changes that will allow to login with both username and email for user. Further explanations can be found at same file's comment sections.
 
-## Customize User Fields at Profile Settings
+## <p id="Customize User Fields at Profile Settings">Customize User Fields at Profile Settings</p>
 
 After signing in on application at right corner(navbar) we can able to see our UserName like "Hi UserName!". 
 By click our username this will be show us our account's management pages. 
@@ -220,7 +228,7 @@ Go throught Views/Shared/_LoginPartial.cshtml and add new item to navbar
  ```
 <img src="https://i.imgur.com/BBUIFpU.png" width=750px alt="profile">
 
-## Managing(Create, Read, Update, Delete) Roles
+## <p id="Managing(Create, Read, Update, Delete) Roles">Managing(Create, Read, Update, Delete) Roles</p>
 
 Now moving to create role based authorizing for reaching web pages. 
 And theese roles will attached to users and works like military ranks. 
@@ -258,6 +266,48 @@ Here we generated our CRUD operations and will be shown at its view(Views/Role/I
 
 <img src="https://i.imgur.com/SnsxZVx.png" alt="Manage roles">
 
-## Listing and Managing User's Roles
+## <p id="Listing and Managing User's Roles">Listing and Managing User's Roles</p>
 
+In this section we will list existed users with their assigned roles to them and we will able to re-assign that roles. 
+For making it first we have to add UserRolesViewModel and ManageUserRolesViewModel that holds what User properties we want to show.
+```
+ public class UserRolesViewModel                                          public class ManageUserRolesViewModel
+    {                                                                         {
+        public string UserId { get; set; }                                         public string RoleId { get; set; }
+        public string FirstName { get; set; }                                      public string RoleName { get; set; }
+        public string LastName { get; set; }                                       public bool Selected { get; set; }
+        public string UserName { get; set; }                                  }    
+        public string Email { get; set; }
+        public IEnumerable<string> Roles { get; set; }
+    }
+```
+Next, we will create a contollers(UserRolesController) that throws out a view with a list of user details and assigned Roles. 
+Essentially it would get all the users from the database and also the roles per user. 
+Then at their views(Views/UserRoles/Index.html and Views/UserRoles/Manage.html) we use that models like this;
 
+```
+@foreach (var user in Model)
+        {
+        <tr>
+            <td>@user.FirstName</td>
+            <td>@user.LastName</td>
+            <td>@user.Email</td>
+            <td>@string.Join(" , ", user.Roles.ToList())</td>
+            <td>
+                <a class="btn btn-primary" asp-controller="UserRoles" asp-action="Manage" asp-route-userId="@user.UserId">Manage Roles</a>
+            </td>
+        </tr>
+        }
+```
+After adding following files (Model/UserRolesViewModel, Controllers/UserRolesController, Views/UserRoles/Index.cshtml)
+<img src="https://i.imgur.com/QxDqY8L.png" alt="User roles">
+After adding following files (Model/ManageUserRolesViewModel, Controllers/UserRolesController, Views/UserRoles/Manage.cshtml)
+<img src="https://i.imgur.com/uDjUKbe.png" alt="manageroles">
+
+# <p id="Contact">Contact</p>
+
+<div>
+<a href="https://www.linkedin.com/in/eray-berbero%C4%9Flu"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original-wordmark.svg" alt="LinkedIn" width="75"/></a>
+<a href="https://github.com/candem15"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original-wordmark.svg" alt="Github" width="75"/></a>
+<a href="mailto:eraybrbr@gmail.com"><img src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/Gmail.max-1100x1100.png" alt="Gmail" width="75"/></a>
+</div>
