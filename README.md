@@ -13,9 +13,11 @@
      * <a href="#Customize Register and Login Pages">Customize Register and Login Pages</a>
      * <a href="#Managing(Create, Read, Update, Delete) Roles">Managing(Create, Read, Update, Delete) Roles</a>
      * <a href="#Listing and Managing User's Roles">Listing and Managing User's Roles</a>
-  3. <a href="#Contact">Contact</a>
+  3. <a href="#Deployment Guide">Deployment Guide</a>
+  4. <a href="#Contact">Contact</a>
+  
 </details>
-
+docker pull candem16/userauthidentityapi
 # <p id="About Project">About Project</p>
 
 UserAuthIdentityApi is customized version of Asp.Net Core MVC alongside Identity UI. Besides default features this includes bunch of additional user details, role management, 
@@ -304,6 +306,15 @@ After adding following files (Model/UserRolesViewModel, Controllers/UserRolesCon
 After adding following files (Model/ManageUserRolesViewModel, Controllers/UserRolesController, Views/UserRoles/Manage.cshtml)
 <img src="https://i.imgur.com/uDjUKbe.png" alt="manageroles">
 
+# <p id="Deployment Guide">Deployment Guide</p>
+
+## <p id="Deployment Guide">1.Set Up PostgreSql</p>
+
+Create user on PostgreSql with user id "postgres" and password "112233". 
+```
+"PostgresqlAuthConnection":"Server=127.0.0.1;Port=5432;Database=AuthMVC;User Id=postgres;Password=112233;"
+```
+docker run -d -p 5000:80 --name authmvc candem16/userauthidentityapi:v1
 # <p id="Contact">Contact</p>
 
 <div>
