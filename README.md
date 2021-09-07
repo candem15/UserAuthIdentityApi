@@ -1,21 +1,23 @@
+<h2 align="center">UserAuthIdentityApi</h2>
+<h4 align="center">User authentication and management with Asp.Net Core Identity</h2>
 
 <details>
   <summary>Table of Contents</summary>
   
   1. <a href="#About Project">About Project</a>
       * <a href="#Built With">Built With</a>
-  2. <a href="Stages of Project"
-     * <a href="Create Asp.Net Core MVC Application and Scaffolding the Identity UI">Create Asp.Net Core MVC Application and Scaffolding the Identity UI</a>
-     * <a href="Create ApplicationUser Inherited from IdentityUser">Create ApplicationUser inherited from IdentityUser</a>
-     * <a href="Customize Register and Login Pages">Customize Register and Login Pages</a>
-```js
-	console.log('code');
-```
-
-- code
-	```js
-		console.log('also code');
-	```
+      * <a href="#Live Preview">Live Preview</a>
+  2. <a href="#Stages of Project">Stages of Project</a>
+     * <a href="#Create Asp.Net Core MVC Application and Scaffolding the Identity UI">Create Asp.Net Core MVC Application and Scaffolding the Identity UI</a>
+     * <a href="#Create ApplicationUser Inherited from IdentityUser">Create ApplicationUser Inherited from IdentityUser</a>
+     * <a href="#Customize Register and Login Pages">Customize Register and Login Pages</a>
+     * <a href="#Managing(Create, Read, Update, Delete) Roles">Managing(Create, Read, Update, Delete) Roles</a>
+     * <a href="#Listing and Managing User's Roles">Listing and Managing User's Roles</a>
+  3. <a href="#Deployment Guide">Deployment Guide</a>
+     * <a href="#Containerize Postgresql and Migrate Database">Containerize Postgresql and Migrate Database</a>
+     * <a href="#Containerize UserAuthIdentityApi">Containerize UserAuthIdentityApi</a>
+  4. <a href="#Contact">Contact</a>
+  
 </details>
 
 # <p id="About Project">About Project</p>
@@ -31,11 +33,16 @@ This project covers most of the practical use cases involved while developing Us
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original-wordmark.svg" width=75px>
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-plain-wordmark.svg" width=75px>
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-plain-wordmark.svg" width=75px>
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original-wordmark.svg" width=75px>
 </div>
 
-# Stages of Project
+## <p id="Live Preview">Live Preview</p>
 
-## Create Asp.Net Core MVC Application and Scaffolding the Identity UI
+<img src="https://i.imgur.com/aDCLm3j.gif" alt="gif">
+     
+# <p id="Stages of Project">Stages of Project</p>
+
+## <p id="Create Asp.Net Core MVC Application and Scaffolding the Identity UI">Create Asp.Net Core MVC Application and Scaffolding the Identity UI</p>
 
 Start off with creating ASP.NET Core MVC project with with Authenication. I'm used VScode as IDE so i will show it via terminal commands.
 ```
@@ -64,9 +71,10 @@ Once it is added, we can see a number of razor pages in the Areas folder.
 These are files that act as the default Identity UI. 
 Moving further we will customizing Identity to match our requirements for this project.
 After scaffolding, project folder will look like this ;
+
 <img src="https://i.imgur.com/NiSbED2.png" width=300px alt="Identity Scaffold">
 
-## Create ApplicationUser inherited from IdentityUser
+## <p id="Create ApplicationUser Inherited from IdentityUser">Create ApplicationUser Inherited from IdentityUser</p>
 
 I recommend to install this package for to see frontend changes without restarting application.
 ```
@@ -112,7 +120,7 @@ IdentityUser => ApplicationUser
 IdentityUser => ApplicationUser
 ```
 
-## Migration and Update Database
+## <p id="Migration and Update Database">Migration and Update Database</p>
 
 Before creating new migrations, we deleted existing migrations that came from creating project. 
 At ApplicationDbContext.cs we overrided existing columns to new columns names that we want. After that change table names: "AspNetUsers" => "Users", "AspNetRoles" => "Role" ...
@@ -176,7 +184,7 @@ Now our database ready to be running on PostgreSQL.
 <img src="https://i.imgur.com/pbhekeH.png" width=200px alt="postgres">
 </div>
 
-## Customize Register and Login Pages
+## <p id="Customize Register and Login Pages">Customize Register and Login Pages</p>
 
 Here i wanted to see both pages like switch buttons in same template. 
 This part is about designing pages so its completely optional.
@@ -188,7 +196,7 @@ I added first name and last name section for registering new users. Further desi
 In Register.cshtml.cs file added FirstName and LastName to InputNodel class with Required attritibute. 
 Also at Login.cshtml.cs maded changes that will allow to login with both username and email for user. Further explanations can be found at same file's comment sections.
 
-## Customize User Fields at Profile Settings
+## <p id="Customize User Fields at Profile Settings">Customize User Fields at Profile Settings</p>
 
 After signing in on application at right corner(navbar) we can able to see our UserName like "Hi UserName!". 
 By click our username this will be show us our account's management pages. 
@@ -223,10 +231,225 @@ Go throught Views/Shared/_LoginPartial.cshtml and add new item to navbar
         }
  </li>
  ```
-<<<<<<< HEAD
-=======
 <img src="https://i.imgur.com/BBUIFpU.png" width=750px alt="profile">
->>>>>>> 473ae6857faaf164a174fd7ed30e6dda3eea7998
 
-In Progress...
+## <p id="Managing(Create, Read, Update, Delete) Roles">Managing(Create, Read, Update, Delete) Roles</p>
 
+Now moving to create role based authorizing for reaching web pages. 
+And theese roles will attached to users and works like military ranks. 
+Each role will have certain level of permission to make action on application. 
+First of all, we will seed default roles to database. 
+This seed will helps us to assign role auto when new account created.
+Create an Enum for the supported Roles. Add a new Enum at Enums/Roles.cs
+```
+public enum Roles
+{
+    SuperAdmin,
+    Admin,
+    Moderator,
+    Basic,
+    Visitor
+}
+```
+Then add ContextSeed.cs in Data folder and add Roles that we created at Enums/Roles.cs with RoleManager's CreateAsync method under SeedRolesAsync task method.
+Now seeded roles must be invoke at somewhere. In mine app, this place is main function at Program.cs
+```
+await ContextSeed.SeedRolesAsync(userManager, roleManager);
+```
+We can also seed user with SuperAdmin role that have every permission over application like owner of it. 
+But its optional. 
+If you want to seed that go through ContextSeed.cs => SeedSuperAdminAsync method. 
+Kinda have same procedure like seeding default roles.
+For assigning role to newly created accounts, we adding one line of code at Register.cshtml.cs
+```
+await _userManager.AddToRoleAsync(user, Enums.Roles.Basic.ToString());
+```
+After making our seeds, start building an UI with which we can View and Manage Roles. 
+It will be a simple view that Lists out all the roles available and has a feature to CRUD operations. 
+Start by adding a new Empty MVC Controller to the Controllers folder and naming it "RoleController.cs". 
+Here we generated our CRUD operations and will be shown at its view(Views/Role/Index.chtml). 
+
+<img src="https://i.imgur.com/SnsxZVx.png" alt="Manage roles">
+
+## <p id="Listing and Managing User's Roles">Listing and Managing User's Roles</p>
+
+In this section we will list existed users with their assigned roles to them and we will able to re-assign that roles. 
+For making it first we have to add UserRolesViewModel and ManageUserRolesViewModel that holds what User properties we want to show.
+```
+ public class UserRolesViewModel                                          public class ManageUserRolesViewModel
+    {                                                                         {
+        public string UserId { get; set; }                                         public string RoleId { get; set; }
+        public string FirstName { get; set; }                                      public string RoleName { get; set; }
+        public string LastName { get; set; }                                       public bool Selected { get; set; }
+        public string UserName { get; set; }                                  }    
+        public string Email { get; set; }
+        public IEnumerable<string> Roles { get; set; }
+    }
+```
+Next, we will create a contollers(UserRolesController) that throws out a view with a list of user details and assigned Roles. 
+Essentially it would get all the users from the database and also the roles per user. 
+Then at their views(Views/UserRoles/Index.html and Views/UserRoles/Manage.html) we use that models like this;
+
+```
+@foreach (var user in Model)
+        {
+        <tr>
+            <td>@user.FirstName</td>
+            <td>@user.LastName</td>
+            <td>@user.Email</td>
+            <td>@string.Join(" , ", user.Roles.ToList())</td>
+            <td>
+                <a class="btn btn-primary" asp-controller="UserRoles" asp-action="Manage" asp-route-userId="@user.UserId">Manage Roles</a>
+            </td>
+        </tr>
+        }
+```
+After adding following files (Model/UserRolesViewModel, Controllers/UserRolesController, Views/UserRoles/Index.cshtml)
+<img src="https://i.imgur.com/QxDqY8L.png" alt="User roles">
+After adding following files (Model/ManageUserRolesViewModel, Controllers/UserRolesController, Views/UserRoles/Manage.cshtml)
+<img src="https://i.imgur.com/uDjUKbe.png" alt="manageroles">
+
+# <p id="Deployment Guide">Deployment Guide</p>
+
+Here i will show how to containerize both Postgresql, UserAuthIdentityApi and how to able connect with eachother step by step. 
+
+## <p id="Containerize Postgresql and Migrate Database">Containerize Postgresql and Migrate Database</p>
+
+First open your docker desktop and terminal. Run following command for create network that will helps us on binding database and Api.
+
+```
+docker create network userauthmvc
+```
+
+Now are ready to create postresql container. Some paramaters are optional or can be modify if u wish.
+
+```
+docker run --name pg-auth -p 7557:5432 -d -e POSTGRES_PASSWORD=112233 -e POSTGRES_USER=postgres -e POSTGRES_DB=AuthMVC -v pgdata:/var/lib/postgresl/data --network=userauthmvc postgres
+```
+
+This is our migration. You can run it via either pgAdmin or terminal. (Note: Postgresl Docker port exposed on 7557)
+
+```
+CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
+    "MigrationId" character varying(150) NOT NULL,
+    "ProductVersion" character varying(32) NOT NULL,
+    CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")
+);
+
+START TRANSACTION;
+
+CREATE SCHEMA IF NOT EXISTS "AuthMVC";
+
+CREATE TABLE "AuthMVC"."Role" (
+    "Id" text NOT NULL,
+    "Name" character varying(256) NULL,
+    "NormalizedName" character varying(256) NULL,
+    "ConcurrencyStamp" text NULL,
+    CONSTRAINT "PK_Role" PRIMARY KEY ("Id")
+);
+
+CREATE TABLE "AuthMVC"."Users" (
+    "Id" text NOT NULL,
+    "FirstName" text NULL,
+    "LastName" text NULL,
+    "Country" text NULL,
+    "Age" integer NOT NULL,
+    "ProfilePicture" bytea NULL,
+    "UserName" character varying(256) NULL,
+    "NormalizedUserName" character varying(256) NULL,
+    "Email" character varying(256) NULL,
+    "NormalizedEmail" character varying(256) NULL,
+    "EmailConfirmed" boolean NOT NULL,
+    "PasswordHash" text NULL,
+    "SecurityStamp" text NULL,
+    "ConcurrencyStamp" text NULL,
+    "PhoneNumber" text NULL,
+    "PhoneNumberConfirmed" boolean NOT NULL,
+    "TwoFactorEnabled" boolean NOT NULL,
+    "LockoutEnd" timestamp with time zone NULL,
+    "LockoutEnabled" boolean NOT NULL,
+    "AccessFailedCount" integer NOT NULL,
+    CONSTRAINT "PK_Users" PRIMARY KEY ("Id")
+);
+
+CREATE TABLE "AuthMVC"."RoleClaims" (
+    "Id" integer GENERATED BY DEFAULT AS IDENTITY,
+    "RoleId" text NOT NULL,
+    "ClaimType" text NULL,
+    "ClaimValue" text NULL,
+    CONSTRAINT "PK_RoleClaims" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_RoleClaims_Role_RoleId" FOREIGN KEY ("RoleId") REFERENCES "AuthMVC"."Role" ("Id") ON DELETE CASCADE
+);
+
+CREATE TABLE "AuthMVC"."UserClaims" (
+    "Id" integer GENERATED BY DEFAULT AS IDENTITY,
+    "UserId" text NOT NULL,
+    "ClaimType" text NULL,
+    "ClaimValue" text NULL,
+    CONSTRAINT "PK_UserClaims" PRIMARY KEY ("Id"),
+    CONSTRAINT "FK_UserClaims_Users_UserId" FOREIGN KEY ("UserId") REFERENCES "AuthMVC"."Users" ("Id") ON DELETE CASCADE
+);
+
+CREATE TABLE "AuthMVC"."UserLogins" (
+    "LoginProvider" character varying(128) NOT NULL,
+    "ProviderKey" character varying(128) NOT NULL,
+    "ProviderDisplayName" text NULL,
+    "UserId" text NOT NULL,
+    CONSTRAINT "PK_UserLogins" PRIMARY KEY ("LoginProvider", "ProviderKey"),
+    CONSTRAINT "FK_UserLogins_Users_UserId" FOREIGN KEY ("UserId") REFERENCES "AuthMVC"."Users" ("Id") ON DELETE CASCADE
+);
+
+CREATE TABLE "AuthMVC"."UserRoles" (
+    "UserId" text NOT NULL,
+    "RoleId" text NOT NULL,
+    CONSTRAINT "PK_UserRoles" PRIMARY KEY ("UserId", "RoleId"),
+    CONSTRAINT "FK_UserRoles_Role_RoleId" FOREIGN KEY ("RoleId") REFERENCES "AuthMVC"."Role" ("Id") ON DELETE CASCADE,
+    CONSTRAINT "FK_UserRoles_Users_UserId" FOREIGN KEY ("UserId") REFERENCES "AuthMVC"."Users" ("Id") ON DELETE CASCADE
+);
+
+CREATE TABLE "AuthMVC"."UserTokens" (
+    "UserId" text NOT NULL,
+    "LoginProvider" character varying(128) NOT NULL,
+    "Name" character varying(128) NOT NULL,
+    "Value" text NULL,
+    CONSTRAINT "PK_UserTokens" PRIMARY KEY ("UserId", "LoginProvider", "Name"),
+    CONSTRAINT "FK_UserTokens_Users_UserId" FOREIGN KEY ("UserId") REFERENCES "AuthMVC"."Users" ("Id") ON DELETE CASCADE
+);
+
+CREATE UNIQUE INDEX "RoleNameIndex" ON "AuthMVC"."Role" ("NormalizedName");
+
+CREATE INDEX "IX_RoleClaims_RoleId" ON "AuthMVC"."RoleClaims" ("RoleId");
+
+CREATE INDEX "IX_UserClaims_UserId" ON "AuthMVC"."UserClaims" ("UserId");
+
+CREATE INDEX "IX_UserLogins_UserId" ON "AuthMVC"."UserLogins" ("UserId");
+
+CREATE INDEX "IX_UserRoles_RoleId" ON "AuthMVC"."UserRoles" ("RoleId");
+
+CREATE INDEX "EmailIndex" ON "AuthMVC"."Users" ("NormalizedEmail");
+
+CREATE UNIQUE INDEX "UserNameIndex" ON "AuthMVC"."Users" ("NormalizedUserName");
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20210906013211_forDocker', '5.0.9');
+
+COMMIT;
+```
+## <p id="Containerize UserAuthIdentityApi">Containerize UserAuthIdentityApi</p>
+
+Run following on terminal for my version of api.
+
+```
+docker run -it --name userauthapi --rm -p 5000:5000 -e PostgreslSettings:Server=pg-auth --network=userauthmvc candem16/userauthidentityapi:v1
+```
+As we can see both docker continer run on same network so binding is completed. After all is done, containers will looks like this;
+
+<img src="https://i.imgur.com/YbbhdRm.png" alt="containers">
+
+# <p id="Contact">Contact</p>
+
+<div>
+<a href="https://www.linkedin.com/in/eray-berbero%C4%9Flu"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original-wordmark.svg" alt="LinkedIn" width="75"/></a>
+<a href="https://github.com/candem15"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original-wordmark.svg" alt="Github" width="75"/></a>
+<a href="mailto:eraybrbr@gmail.com"><img src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/Gmail.max-1100x1100.png" alt="Gmail" width="75"/></a>
+</div>
