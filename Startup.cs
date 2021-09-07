@@ -12,6 +12,7 @@ using UserAuthIdentityApi.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using UserAuthIdentityApi.Settings;
 
 namespace UserAuthIdentityApi
 {
@@ -27,9 +28,12 @@ namespace UserAuthIdentityApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+           /* services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseNpgsql(
+                    Configuration.GetConnectionString("PostgresqlAuthConnection")));*/
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(
-                    Configuration.GetConnectionString("PostgresqlAuthConnection")));
+                    Configuration.GetSection(nameof(PostgresqlSettings)).Get<PostgresqlSettings>().ConnectionString));
             services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddControllersWithViews().AddRazorRuntimeCompilation(); //This is added for to see cshtml changes without restarting app.
             services.AddControllersWithViews();
@@ -49,7 +53,11 @@ namespace UserAuthIdentityApi
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            if(env.IsDevelopment())
+            {
             app.UseHttpsRedirection();
+            }
             app.UseStaticFiles();
 
             app.UseRouting();

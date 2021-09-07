@@ -4,6 +4,7 @@ using UserAuthIdentityApi.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using UserAuthIdentityApi.Settings;
 
 [assembly: HostingStartup(typeof(UserAuthIdentityApi.Areas.Identity.IdentityHostingStartup))]
 namespace UserAuthIdentityApi.Areas.Identity
@@ -15,7 +16,10 @@ namespace UserAuthIdentityApi.Areas.Identity
             builder.ConfigureServices((context, services) => {
                 services.AddDbContext<ApplicationDbContext>(options =>
                     options.UseNpgsql(
-                        context.Configuration.GetConnectionString("PostgresqlAuthConnection")));
+                        context.Configuration.GetSection(nameof(PostgresqlSettings)).Get<PostgresqlSettings>().ConnectionString));
+               /* services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseNpgsql(
+                        context.Configuration.GetConnectionString("PostgresqlAuthConnection")));*/
                 services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false).AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             });
